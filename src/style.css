@@ -1,0 +1,52 @@
+/* 
+https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html#typesize
+*/
+
+#eigener-button {
+	-fx-font: 100px Verdana;
+	-fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #00fea3, #00bece);
+	-fx-border-width: 2px;
+	-fx-background-color: #001825;
+	-fx-text-fill: #ffffff;
+	-fx-font-size: 1em;
+}
+
+#eigener-button:hover {
+    -fx-background-color: #00507b;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+#eigener-button:pressed {
+    -fx-background-color: #007bbe;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.border-verlauf {
+	-fx-border-color: linear-gradient(from 25% 25% to 100% 100%, #00fea3, #00bece);
+	-fx-border-width: 2px;
+}
+
+.verlauf{
+	-fx-fill:linear-gradient(from 25% 25% to 100% 100%, #00fea3, #00bece);
+}
+
+.hintergrund {
+	-fx-background-image: url("Sudoku547x547.jpg");
+	-fx-background-repeat: no-repeat;	
+}
+
+.text-field{
+    -fx-min-width: 45; 
+    -fx-min-height: 45;
+    -fx-font: 100px Verdana;
+	-fx-text-fill: #000000;
+	-fx-font-size: 1.5em;
+	-fx-alignment: center;   
+}
+
+#eigenes-label{
+	-fx-font: 100px Verdana;
+	-fx-text-fill: #ffffff;
+	-fx-font-size: 1.1em;
+}
