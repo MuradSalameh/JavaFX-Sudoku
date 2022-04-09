@@ -42,7 +42,28 @@ https://docs.oracle.com/javafx/2/api/javafx/scene/doc-files/cssref.html#typesize
     -fx-font: 100px Verdana;
 	-fx-text-fill: #000000;
 	-fx-font-size: 1.5em;
-	-fx-alignment: center;   
+	-fx-alignment: center; 
+	-fx-control-inner-background: #ffffff;  
+}
+
+.text-field-falsch{
+    -fx-min-width: 45; 
+    -fx-min-height: 45;
+    -fx-font: 100px Verdana;
+	-fx-text-fill: #000000;
+	-fx-font-size: 1.5em;
+	-fx-alignment: center;
+	-fx-control-inner-background: red;   
+}
+
+.text-field-richtig{
+    -fx-min-width: 45; 
+    -fx-min-height: 45;
+    -fx-font: 100px Verdana;
+	-fx-text-fill: #000000;
+	-fx-font-size: 1.5em;
+	-fx-alignment: center;
+	-fx-control-inner-background: green;   
 }
 
 #eigenes-label{
