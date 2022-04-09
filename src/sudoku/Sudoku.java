@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 
 public class Sudoku extends Application {
 	private int counter = 0;
-	
+
 	private static Label lbl = new Label("");
 	private static GridPane raster = new GridPane();
 	private static GridPane rasterUI = new GridPane();
@@ -60,11 +60,11 @@ public class Sudoku extends Application {
 		rasterUI.setHgap(10);
 		rasterUI.setVgap(10);
 
-		//PseudoClass right = PseudoClass.getPseudoClass("right");
-		//PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
+		// PseudoClass right = PseudoClass.getPseudoClass("right");
+		// PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
 
-		TextField[] tf = new TextField[81];		
-		TextField[] tfUI = new TextField[81];		
+		TextField[] tf = new TextField[81];
+		TextField[] tfUI = new TextField[81];
 
 		// "raster" mit Textfeldern füllen !!!!!! //Add(node, Spaltenindex, Zeilenindex)
 		for (int zeile = 0; zeile <= 8; zeile++) {
@@ -155,9 +155,8 @@ public class Sudoku extends Application {
 		rh4.setManaged(false);
 		rh4.getStyleClass().add("verlauf");
 
-		stack.getChildren().addAll(rasterUI, rv1, rv2, rh3, rh4);
-		// stack.setAlignment(Pos.CENTER); // Right-justify nodes in stack
-		// StackPane.setMargin(helpText, new Insets(0, 10, 0, 0)); // Center "?"
+		stack.getChildren().addAll(rasterUI, rv1, rv2, rh3, rh4); //Stack legt Linienelemente über GridPane
+		
 
 		bp.setRight(vb);
 		bp.setCenter(stack);
@@ -165,110 +164,114 @@ public class Sudoku extends Application {
 
 		Scene scene = new Scene(bp, 670, 550);
 		scene.getStylesheets().add("style.css");
-		
-		
-		
-		
-		
-		
+				
 
-//// BUTTON LADEN
-		
-		// Zahlen aus generator.txt auslesen und in sudoku textfelder einfügen.
+		//// BUTTON LADEN		
 		buttonLaden.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				int counter = 0;
 				try {
-					// bufferReader anlegen
+					// BufferedReader anlegen & Zahlen aus generator.txt auslesen und in Sudoku Textfelder einfügen.
 					Path taFile = Paths.get("generator.txt");
 					System.out.println(taFile.toAbsolutePath());
 					BufferedReader br = Files.newBufferedReader(taFile);
 					String[] leser = new String[81];
-					
 
-					for (int i = 0; i < leser.length; i++) {
+					for (int i = 0; i < leser.length; i++) { 		//Datei zeilenweise einlesen
 						leser[i] = br.readLine();
 					}
 
 					for (int zeile = 0; zeile <= 8; zeile++) {
 						for (int spalte = 0; spalte <= 8; spalte++) {
 
-							if (leser[counter].equals(" ")) {
-								tf[counter].setText("");								
-								tfUI[counter].setText("");								
-								
+							if (leser[counter].equals(" ")) {	//wenn leerzeichen, dann leeren String in Feld eintragen
+								tf[counter].setText("");
+								tfUI[counter].setText("");
+
 							} else {
-								tf[counter].setText(leser[counter]);								
-								tfUI[counter].setText(leser[counter]);								
-								
+								tf[counter].setText(leser[counter]);
+								tfUI[counter].setText(leser[counter]);
+
 							}
 
-							if (tf[counter].getText().equals("")) {
+							if (tf[counter].getText().equals("")) { //Wenn Feld mit leerem String eingetragen, dann editierbar lassen
 								tf[counter].setEditable(true);
 								tfUI[counter].setEditable(true);
-								
+
 							} else {
-								tf[counter].setEditable(false);
+								tf[counter].setEditable(false);		//Wenn Feld mit String aus Datei gefüllt,dann nicht mehr editierbar machen
 								tfUI[counter].setEditable(false);
-								
+
 							}
 							counter++;
 						}
 					}
 					lbl.setText("DATEI GELESEN!");
 					br.close();
-					
-					solveSudoku();
-					
+
+					solveSudoku(); 		// Wenn alle Zeilen ausgelesen und alle Felder Befüllt, dann Lösung berechnen 
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		
-//// BUTTON LÖSUNG		
 
+		//// BUTTON LÖSUNG
 		buttonLoesung.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				
-				
-				//lösung im Array
-				for(String lz : loesung) {
-					System.out.println(lz);
+				int cl = 0;
+				for (int zeile = 0; zeile <= 8; zeile++) {
+					for (int spalte = 0; spalte <= 8; spalte++) {
+						TextField tf = (TextField) getNode(zeile, spalte, rasterUI); // Lösung aus dem Lösungs Array holen und in Felder der UI GridPane schreiben
+						tf.setText(loesung[cl]);
+						cl++;
+						lbl.setText("DAS IST DIE\nLÖSUNG!");
+					}
 				}
 			}
 		});
 
-//// BUTTON START
-		
+		//// BUTTON START
 		buttonStart.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent event) {	
-				
+			public void handle(ActionEvent event) {
 				startMethode();
+				lbl.setText("LOS GEHTS'S");
 			}
 		});
-		
+
+		//// BUTTON NEU
+		buttonNeu.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				int cl = 0;
+				for (int zeile = 0; zeile <= 8; zeile++) {
+					for (int spalte = 0; spalte <= 8; spalte++) {
+						TextField tf = (TextField) getNode(zeile, spalte, rasterUI);
+						tf.setText("");
+						tf.setStyle("-fx-control-inner-background: #ffffff");
+						cl++;
+						lbl.setText("");
+
+					}
+				}
+			}
+		});
+
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.setTitle("FX Sudoku");
 		primaryStage.show();
-
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
-	
-	
-	
-	
-	
-	
-	//Hole Inhalt(TextField)aus zelle der GridPane 
+
+	// Hole Node(TextField) aus Zelle der GridPane damit Zugriff auf Inhalt erfolgen kann
 	public static Node getNode(final int zeile, final int spalte, GridPane r) {
 		Node result = null;
 		ObservableList<Node> childrens = r.getChildren();
@@ -280,55 +283,34 @@ public class Sudoku extends Application {
 		}
 		return result;
 	}
-	
-	
-	
-	
-	
 
-	// Nummer in Zeile suchen
+	// Nummer in aktueller Zeile suchen
 	public static boolean istNrInZeile(int nummer, int zeile) {
 		String n = Integer.toString(nummer);
 		for (int spalte = 0; spalte <= 8; spalte++) {
-			TextField tf = (TextField) getNode(zeile, spalte, raster);			
+			TextField tf = (TextField) getNode(zeile, spalte, raster);
 
 			if (tf.getText().equals(n)) {
-				lbl.setText("true");
 				return true;
-			}						
+			}
 		}
-		lbl.setText("false");
 		return false;
 	}
-	
-	
-	
-	
-	
 
-	// Nummer in Spalte suchen
+	// Nummer in aktueller Spalte suchen
 	public static boolean istNrInSpalte(int nummer, int spalte) {
 		String n = Integer.toString(nummer);
 		for (int zeile = 0; zeile <= 8; zeile++) {
-			TextField tf = (TextField) getNode(zeile, spalte, raster);	
-			
+			TextField tf = (TextField) getNode(zeile, spalte, raster);
+
 			if (tf.getText().equals(n)) {
-				lbl.setText("true");
 				return true;
 			}
-			
 		}
-		lbl.setText("false");
 		return false;
 	}
-	
-	
-	
-	
-	
 
 	// Nummer in 3x3 Bereich suchen suchen
-
 	public static boolean istNrInBereich(int nummer, int spalte, int zeile) {
 		// Obere linke ecke des Bereichs finden z.b nummer ist in spalte 4 zeile 7
 		int bereichZeile = zeile - zeile % 3; // zeile index 7 - (zeile index 7 mod 3 = 1) == Zeile index 6
@@ -344,33 +326,20 @@ public class Sudoku extends Application {
 				// System.out.println(tf.getText());
 
 				if (tf.getText().equals(n)) {
-					System.out.println("bereich loop 3a");
-					lbl.setText("true");
+					// System.out.println("bereich loop 3a");
 					return true;
-				}						
+				}
 			}
 		}
-		lbl.setText("false");
 		return false;
 	}
-	
-	
-	
-	
-	
-	
 
-	// erlaubte platzierung? zusammenfassung aller drei methoden() ist in: spalte,
-	// zeile, bereich
+	// erlaubte Platzierung? Zusammenfassung aller drei Methoden: spalte, zeile, bereich
 	public static boolean istNummerErlaubt(int nummer, int spalte, int zeile) {
 
-		return (!istNrInZeile(nummer, zeile) && !istNrInSpalte(nummer, spalte)
+		return (!istNrInZeile(nummer, zeile) && !istNrInSpalte(nummer, spalte) //Wenn nummer nirgendwo gefunden, dann istNummerErlaubt == true
 				&& !istNrInBereich(nummer, spalte, zeile));
 	}
-
-	
-	
-	
 	
 	
 	public static boolean solveSudoku() {
@@ -383,54 +352,53 @@ public class Sudoku extends Application {
 				if (tf.getText().equals("")) { // Finde leeres Feld
 					// System.out.println("leeres Feld gefunden");
 
-					for (int testNummer = 1; testNummer <= 9; testNummer++) { //
+					for (int testNummer = 1; testNummer <= 9; testNummer++) { //Testnummern generieren
 						// System.out.println("Testnummer Loop");
 
-						if (istNummerErlaubt(testNummer, spalte, zeile)) { // Setze testnummer in leeres Feld und prüfe
-							// ob nummer erlaubt ist
+						if (istNummerErlaubt(testNummer, spalte, zeile)) { // Setze testnummer in leeres Feld und prüfe ob nummer erlaubt ist
 							String tn = Integer.toString(testNummer);
-							tf.setText(tn);
+							tf.setText(tn);								//Wenn ja, dann trage nummer ein
 							// System.out.println("Testnummer " + tn);
 
-							if (solveSudoku()) {
-								return true;
+							if (solveSudoku()) { //lässt sich das Sudoku mit der zuletzt eingetragenen testNummer bis zum Ende lösen? 
+								return true; 	//Wenn ja, dann bleibt die nummer Drin und das Sudoku wird mit der neu eingetragenen nummer erneut mit solveSudoku() durchlaufen
 							} else {
-								tf.setText("");
+								tf.setText(""); //Wenn nein dann wird die eingetragene Testnummer auf null gesetzt und der loop geht mit nächster Testnummer weiter
 							}
 						}
 					}
 					// System.out.println("Solve false");
-					return false;
+					return false; //ist das sudoku nicht lösbar, dann return false
 				}
 			}
 		}
 		
+		//Wenn code bis hier her kommt, konnte Sudoku gelöst werden
 		System.out.println("SUDOKU GELÖST");
-		lbl.setText("START DRÜCKEN\nUM ZU SPIELEN");		
-		
-		for (int zeile = 0; zeile <= 8; zeile++) {
+		lbl.setText("START DRÜCKEN\nUM ZU SPIELEN");
+
+		for (int zeile = 0; zeile <= 8; zeile++) {		//schreibe Lösung in Array
 			for (int spalte = 0; spalte <= 8; spalte++) {
 				TextField tf = (TextField) getNode(zeile, spalte, raster);
 				loesung[counter] = tf.getText();
 				counter++;
 			}
 		}
-		
-		return true;		
+		return true;
 	}
-		
-	
-	public static void startMethode() {			
-		int c1= 0;
-		
+
+	public static void startMethode() {
+		int c1 = 0;
+
 		for (int zeile = 0; zeile <= 8; zeile++) {
 			z = zeile;
+
 			for (int spalte = 0; spalte <= 8; spalte++) {
 				String vergleich = loesung[c1];
 				s = spalte;
 				c1++;
 
-				TextField tf = (TextField) getNode(zeile, spalte, rasterUI);			
+				TextField tf = (TextField) getNode(zeile, spalte, rasterUI);
 
 				// erlaube nur einen Char als eingabe
 				tf.setTextFormatter(new TextFormatter<String>((Change change) -> {
@@ -441,45 +409,39 @@ public class Sudoku extends Application {
 						return change;
 					}
 				}));
-
 				
+				//Event wenn beim Tippen die Taste losgelassen wird
 				tf.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 					public void handle(KeyEvent ke) {
 
-						if (tf.getText().matches("/(^$)|^[1-9]{1}+$")) { // regex erlaube nur zahlen von 1 bis 9 und nur eine Zahl als eingabe
-							System.out.println(tf.getText());							
-							
-							tf.setStyle("-fx-control-inner-background: #ffffff");
-							String tfString = tf.getText();
-							int strZuNum = Integer.parseInt(tfString);
-														
+						if (tf.getText().matches("/(^$)|^[1-9]{1}+$")) { // regex erlaube nur zahlen von 1 bis 9 und leer und nur
+																			// eine Zahl als Eingabe
+							//System.out.println(tf.getText());
 
-							if (!tf.getText().isEmpty() && tf.getText().equals(vergleich)) {
+							tf.setStyle("-fx-control-inner-background: #ffffff"); //Standard Zustand Textfeld Farbe weiss
+							
+
+							if (!tf.getText().isEmpty() && tf.getText().equals(vergleich)) { //wenn eingegebene Zahl  == Lösung, dann hintergrund grün und Meldung
 								System.out.println("Gut");
 								tf.setStyle("-fx-control-inner-background: green");
 								System.out.println("Korrekte Nummer ist " + vergleich);
-								
-								
-							} else if(!tf.getText().isEmpty() && istNummerErlaubt(strZuNum, s, z)) {
-								System.out.println("Schlecht");
-								tf.setStyle("-fx-control-inner-background: red");
+								lbl.setText("Gut!");
 							}
 
-						} else if (tf.getText().equals("")) {
+						} else if (tf.getText().equals("")) {						//wenn Textfeld leer, dann Hintergrund wieder auf Weiss
 							tf.setStyle("-fx-control-inner-background: #ffffff");
 							System.out.println("is empty!");
-						}
-
-						else {
-							tf.setStyle("-fx-control-inner-background: red");
+							lbl.setText("");
+						} else {
+							tf.setStyle("-fx-control-inner-background: red"); //Wenn eingetragener String nicht 1 bis 9 dann Rot und Meldung
 							System.out.println("INVALID INPUT!");
+							lbl.setText("Ungültige Eingabe!");
 						}
-					}										
-				});	
-				
-				
+					}
+				});
+
 			}
 		}
-	}	
+	}
 }
