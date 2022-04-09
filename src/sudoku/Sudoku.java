@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 public class Sudoku extends Application {
 	private int counter = 0;
 	private static Label lbl = new Label("");
-	private static GridPane raster = new GridPane();	
+	private static GridPane raster = new GridPane();
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -53,12 +53,12 @@ public class Sudoku extends Application {
 
 		TextField[] tf = new TextField[81];
 
-		// "raster" mit Textfeldern füllen  !!!!!! //Add(node, Spaltenindex, Zeilenindex)
+		// "raster" mit Textfeldern füllen !!!!!! //Add(node, Spaltenindex, Zeilenindex)
 		for (int zeile = 0; zeile <= 8; zeile++) {
 			for (int spalte = 0; spalte <= 8; spalte++) {
 
-				raster.add(tf[counter] = new TextField(), spalte, zeile);	//erst spalte dann Zeile!!!				
-				counter++;						
+				raster.add(tf[counter] = new TextField(), spalte, zeile); // erst spalte dann Zeile!!!
+				counter++;
 			}
 		}
 
@@ -119,8 +119,8 @@ public class Sudoku extends Application {
 
 		Button buttonNeu = new Button("NEUES SPIEL");
 		buttonNeu.setPrefWidth(120);
-		buttonNeu.setId("eigener-button");		
-		
+		buttonNeu.setId("eigener-button");
+
 		VBox vb = new VBox(10, buttonLaden, buttonLos, buttonLoesung, buttonNeu, lbl);
 		vb.setPadding(new Insets(10));
 
@@ -132,18 +132,17 @@ public class Sudoku extends Application {
 		rv2.setManaged(false);
 		rv2.getStyleClass().add("verlauf");
 
-
 		Rectangle rh3 = new Rectangle(0, 184, 529, 2);
 		rh3.setManaged(false);
-		rh3.getStyleClass().add("verlauf");		
+		rh3.getStyleClass().add("verlauf");
 
 		Rectangle rh4 = new Rectangle(0, 363, 529, 2);
 		rh4.setManaged(false);
-		rh4.getStyleClass().add("verlauf");		
+		rh4.getStyleClass().add("verlauf");
 
-		stack.getChildren().addAll(raster,rv1,rv2,rh3,rh4);
-		//stack.setAlignment(Pos.CENTER);     // Right-justify nodes in stack
-		//StackPane.setMargin(helpText, new Insets(0, 10, 0, 0)); // Center "?"	
+		stack.getChildren().addAll(raster, rv1, rv2, rh3, rh4);
+		// stack.setAlignment(Pos.CENTER); // Right-justify nodes in stack
+		// StackPane.setMargin(helpText, new Insets(0, 10, 0, 0)); // Center "?"
 
 		bp.setRight(vb);
 		bp.setCenter(stack);
@@ -178,21 +177,20 @@ public class Sudoku extends Application {
 
 							tf[counter].setText(leser[counter]);
 
-							if(tf[counter].getText().equals(" ")) {
-								tf[counter].setEditable(true);									
-							} 
-							else {
-								tf[counter].setEditable(false);								
-							}							
+							if (tf[counter].getText().equals(" ")) {
+								tf[counter].setEditable(true);
+							} else {
+								tf[counter].setEditable(false);
+							}
 							counter++;
 						}
 					}
 					lbl.setText("DATEI GELESEN!");
-					br.close();		
+					br.close();
 
-					//for(String eineZ : leser) {
-					//	System.out.println(eineZ);
-					//}
+					// for(String eineZ : leser) {
+					// System.out.println(eineZ);
+					// }
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -200,13 +198,16 @@ public class Sudoku extends Application {
 			}
 		});
 
-		buttonLoesung.setOnAction(new EventHandler<ActionEvent>() {			
+		buttonLoesung.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-				istNrInZeile(9, 0);
-
-				//TextField tf = (TextField) getNode(2, 3, raster);				
-				//System.out.println(tf.getText());
+				// istNrInZeile(9, 3);
+				// istNrInSpalte(9, 3);
+				//istNrInBereich(1, 0, 6); //spalte zeile
+				//istNummerErlaubt(1, 2, 0);
+				solveSudoku();
+				// TextField tf = (TextField) getNode(2, 3, raster);
+				// System.out.println(tf.getText());
 			}
 		});
 	}
@@ -215,31 +216,116 @@ public class Sudoku extends Application {
 		launch(args);
 	}
 
-	
-	public static Node getNode(final int zeile,final int spalte,GridPane raster) {
+	public static Node getNode(final int zeile, final int spalte, GridPane raster) {
 		Node result = null;
 		ObservableList<Node> childrens = raster.getChildren();
-		for(Node node : childrens) {
-			if(raster.getRowIndex(node) == zeile && raster.getColumnIndex(node) == spalte) {
+		for (Node node : childrens) {
+			if (raster.getRowIndex(node) == zeile && raster.getColumnIndex(node) == spalte) {
 				result = node;
 				break;
 			}
-		}   
+		}
 		return result;
 	}
 
+	// Nummer in Zeile suchen
 	public static boolean istNrInZeile(int nummer, int zeile) {
 		String n = Integer.toString(nummer);
 		for (int spalte = 0; spalte <= 8; spalte++) {
-			TextField tf = (TextField) getNode(zeile, spalte, raster);	
-			
-			if(tf.getText().equals(n)) {
+			TextField tf = (TextField) getNode(zeile, spalte, raster);
+
+			if (tf.getText().equals(n)) {
 				lbl.setText("true");
-				return true;					
-			}			
+				return true;
+			}
 		}
 		lbl.setText("false");
-		return false;		
+		return false;
+	}
+
+	// Nummer in Spalte suchen
+	public static boolean istNrInSpalte(int nummer, int spalte) {
+		String n = Integer.toString(nummer);
+		for (int zeile = 0; zeile <= 8; zeile++) {
+			TextField tf = (TextField) getNode(zeile, spalte, raster);
+
+			if (tf.getText().equals(n)) {
+				lbl.setText("true");
+				return true;
+			}
+		}
+		lbl.setText("false");
+		return false;
+	}
+
+	// Nummer in 3x3 Bereich suchen suchen
+
+	public static boolean istNrInBereich(int nummer, int spalte, int zeile) {
+		// Obere linke ecke des Bereichs finden z.b nummer ist in spalte 4 zeile 7
+		int bereichZeile = zeile - zeile % 3;      // zeile index 7 - (zeile index 7 mod 3 = 1) == Zeile index 6
+		int bereichSpalte = spalte - spalte % 3;   // spalte index 4 - (spalte index 4 mod 3 = 1) == Spalte index 3
+		String n = Integer.toString(nummer);
+
+		for (int bz = bereichZeile; bz < bereichZeile + 3; bz++) {
+			//System.out.println("bereich loop 1");
+
+			for (int bs = bereichSpalte; bs < bereichSpalte + 3; bs++) {
+				TextField tf = (TextField) getNode(bz, bs, raster);
+				//System.out.println("bereich loop 2");
+				//System.out.println(tf.getText());		
+				
+				if (tf.getText().equals(n)) {
+					System.out.println("bereich loop 3");
+					lbl.setText("true");
+					return true;					
+				}				
+			}
+		}
+		lbl.setText("false");
+		return false;
+	}
+
+	//erlaubte platzierung? zusammenfassung aller drei methoden() ist in: spalte, zeile, bereich in einer
+	public static boolean istNummerErlaubt(int nummer, int spalte, int zeile) { 
+				
+		return (!istNrInZeile(nummer, zeile) && !istNrInSpalte(nummer, spalte)
+				&& !istNrInBereich(nummer, spalte, zeile));
+	}
+
+	public static boolean solveSudoku() {
+				
+		for(int zeile = 0; zeile <= 8; zeile++) {			
+			for(int spalte = 0; spalte <= 8; spalte++) {
+				
+				TextField tf = (TextField) getNode(zeile, spalte, raster);				
+				
+				if(tf.getText().equals(" ")) {  // Finde leeres Feld
+					//System.out.println("leeres Feld gefunden");
+					
+					for(int testNummer = 1; testNummer <= 9; testNummer++ ) { // 
+						//System.out.println("Testnummer Loop");
+						
+						if(istNummerErlaubt(testNummer, spalte, zeile)) { //Setze testnummer in leeres Feld und prüfe ob nummer erlaubt ist					
+							//String tn = Integer.toString(testNummer);
+							tf.setText(tn);
+							//System.out.println("Testnummer " + tn);
+														
+							if(solveSudoku()) {
+								return true;
+							}
+							else {
+								tf.setText(" ");
+							}							
+						}
+					}
+					//System.out.println("Solve false");
+					return false;					
+				}
+			}
+		}
+		System.out.println("SUDOKU GELÖST");
+		lbl.setText("SUDOKU GELÖST");
+		return true;		
 	}
 	
 }
