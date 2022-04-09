@@ -1,3 +1,8 @@
+https://www.sudoku-solutions.com/
+
+ACHTUNG!! --> echte Sudokus haben nur eine einzige Lösung!!
+Beim erstellen des Sudokus dringend darauf achten!
+
 Sudoku Regeln
 
 Die leeren Felder im 9x9 Raster so ausfüllen, dass
@@ -6,34 +11,5 @@ Die leeren Felder im 9x9 Raster so ausfüllen, dass
 - jeder Spalte
 - jedem 3x3 Block
 
-jede Zahl nur 1 Mal vorkommt.
+jede Zahl von 1 bis 9 nur 1 Mal vorkommt.
 
-
-Algo:
-
- - zum Start prüfen ob bedinungen eingehalten werden - ansonsten abbrucht des Spiels mit Fehlermeldung
- - Wenn bedingungen eingehalten, dann Spieler lösung suchen lassen, falls es eine gibt / 
-   Alternativ button um Lösung von Algo suchen lassen, falls es eine gibt
-   
-
-Sudoku anlegen:
-9x9 Grid
-9x9 Array
-Leerstellen = 0;
-
-- BEFÜLLEN: methode zum befüllen des sudokus mit generierten zahlen aus Datei - https://www.sudokuweb.org/
-
-- pruefen() methode zum prüfen ob aktuelle befüllung den regeln entspricht (ja/nein - bool)
-				Zeile zeile, Spalte spalte, Block block:				
-					- boolean Array gefunden[] mit 0-9 für die Ziffern und 0 für Platzhalter anlegen in dem gefundene Ziffern gespeichert werden.
-					wenn beim prüfen eine gesuchte ziffer gefunden wird, dann return true. 
-					wenn nicht gefunden dann return false.
-					- jedes element in zeile, spalte block prüfen ob gefunden[] wahr ist.
-					- wenn ja dann programm abbrechen  pruefen() == false mit meldung an user
-					- wenn nein dann 
-					
-					
-		
-
-
-- wenn den regeln entsprechend, dann methode zum lösen des sudokus

@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
@@ -31,10 +34,14 @@ import javafx.stage.Stage;
 
 public class Sudoku extends Application {
 	private int counter = 0;
+	
 	private static Label lbl = new Label("");
 	private static GridPane raster = new GridPane();
+	private static GridPane rasterUI = new GridPane();
+
 	private static int z = 0;
 	private static int s = 0;
+	private static String[] loesung = new String[81];
 
 	@Override
 	public void start(Stage primaryStage) {
@@ -44,28 +51,27 @@ public class Sudoku extends Application {
 		BorderPane bp = new BorderPane();
 		bp.setStyle("-fx-background-color: #001825");
 
-		raster.getStyleClass().add("border-verlauf");
-		raster.setPrefWidth(500);
-		raster.setPrefHeight(500);
-		raster.setMaxSize(550, 550);
+		rasterUI.getStyleClass().add("border-verlauf");
+		rasterUI.setPrefWidth(500);
+		rasterUI.setPrefHeight(500);
+		rasterUI.setMaxSize(550, 550);
 
-		raster.setPadding(new Insets(10));
-		raster.setHgap(10);
-		raster.setVgap(10);
+		rasterUI.setPadding(new Insets(10));
+		rasterUI.setHgap(10);
+		rasterUI.setVgap(10);
 
-		PseudoClass right = PseudoClass.getPseudoClass("right");
-		PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
+		//PseudoClass right = PseudoClass.getPseudoClass("right");
+		//PseudoClass bottom = PseudoClass.getPseudoClass("bottom");
 
-		TextField[] tf = new TextField[81];
-
+		TextField[] tf = new TextField[81];		
+		TextField[] tfUI = new TextField[81];		
 
 		// "raster" mit Textfeldern füllen !!!!!! //Add(node, Spaltenindex, Zeilenindex)
 		for (int zeile = 0; zeile <= 8; zeile++) {
 			for (int spalte = 0; spalte <= 8; spalte++) {
-
 				raster.add(tf[counter] = new TextField(), spalte, zeile); // erst spalte dann Zeile!!!
+				rasterUI.add(tfUI[counter] = new TextField(), spalte, zeile); // erst spalte dann Zeile!!!
 				counter++;
-
 			}
 		}
 
@@ -89,6 +95,7 @@ public class Sudoku extends Application {
 		RowConstraints rc9 = new RowConstraints();
 		rc9.setPercentHeight(12);
 		raster.getRowConstraints().addAll(rc1, rc2, rc3, rc4, rc5, rc6, rc7, rc8, rc9);
+		rasterUI.getRowConstraints().addAll(rc1, rc2, rc3, rc4, rc5, rc6, rc7, rc8, rc9);
 
 		// ColumnConstraints in GriDPane eintragen
 		ColumnConstraints cc1 = new ColumnConstraints();
@@ -110,6 +117,7 @@ public class Sudoku extends Application {
 		ColumnConstraints cc9 = new ColumnConstraints();
 		cc9.setPercentWidth(12);
 		raster.getColumnConstraints().addAll(cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9);
+		rasterUI.getColumnConstraints().addAll(cc1, cc2, cc3, cc4, cc5, cc6, cc7, cc8, cc9);
 
 		// Buttons
 		Button buttonLaden = new Button("DATEI LADEN");
@@ -139,30 +147,33 @@ public class Sudoku extends Application {
 		rv2.setManaged(false);
 		rv2.getStyleClass().add("verlauf");
 
-		Rectangle rh3 = new Rectangle(0, 184, 529, 2);
+		Rectangle rh3 = new Rectangle(0, 184, 528, 2);
 		rh3.setManaged(false);
 		rh3.getStyleClass().add("verlauf");
 
-		Rectangle rh4 = new Rectangle(0, 363, 529, 2);
+		Rectangle rh4 = new Rectangle(0, 363, 528, 2);
 		rh4.setManaged(false);
 		rh4.getStyleClass().add("verlauf");
 
-		stack.getChildren().addAll(raster, rv1, rv2, rh3, rh4);
+		stack.getChildren().addAll(rasterUI, rv1, rv2, rh3, rh4);
 		// stack.setAlignment(Pos.CENTER); // Right-justify nodes in stack
 		// StackPane.setMargin(helpText, new Insets(0, 10, 0, 0)); // Center "?"
 
 		bp.setRight(vb);
 		bp.setCenter(stack);
-		BorderPane.setAlignment(raster, Pos.CENTER_LEFT);
+		BorderPane.setAlignment(rasterUI, Pos.CENTER_LEFT);
 
 		Scene scene = new Scene(bp, 670, 550);
 		scene.getStylesheets().add("style.css");
+		
+		
+		
+		
+		
+		
 
-		primaryStage.setScene(scene);
-		primaryStage.setResizable(false);
-		primaryStage.setTitle("FX Sudoku");
-		primaryStage.show();
-
+//// BUTTON LADEN
+		
 		// Zahlen aus generator.txt auslesen und in sudoku textfelder einfügen.
 		buttonLaden.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -174,6 +185,7 @@ public class Sudoku extends Application {
 					System.out.println(taFile.toAbsolutePath());
 					BufferedReader br = Files.newBufferedReader(taFile);
 					String[] leser = new String[81];
+					
 
 					for (int i = 0; i < leser.length; i++) {
 						leser[i] = br.readLine();
@@ -182,98 +194,138 @@ public class Sudoku extends Application {
 					for (int zeile = 0; zeile <= 8; zeile++) {
 						for (int spalte = 0; spalte <= 8; spalte++) {
 
-							if(leser[counter].equals(" ")) {
-								tf[counter].setText("");
+							if (leser[counter].equals(" ")) {
+								tf[counter].setText("");								
+								tfUI[counter].setText("");								
+								
 							} else {
-								tf[counter].setText(leser[counter]);
+								tf[counter].setText(leser[counter]);								
+								tfUI[counter].setText(leser[counter]);								
+								
 							}
 
 							if (tf[counter].getText().equals("")) {
 								tf[counter].setEditable(true);
+								tfUI[counter].setEditable(true);
+								
 							} else {
 								tf[counter].setEditable(false);
+								tfUI[counter].setEditable(false);
+								
 							}
 							counter++;
 						}
 					}
 					lbl.setText("DATEI GELESEN!");
 					br.close();
-
-					// for(String eineZ : leser) {
-					// System.out.println(eineZ);
-					// }
+					
+					solveSudoku();
+					
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		
+//// BUTTON LÖSUNG		
 
 		buttonLoesung.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent event) {				
-				solveSudoku();				
+			public void handle(ActionEvent event) {
+				
+				
+				//lösung im Array
+				for(String lz : loesung) {
+					System.out.println(lz);
+				}
 			}
 		});
 
-
-		////			BUTTON START
-		////
-
+//// BUTTON START
+		
 		buttonStart.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {	
+				
 				startMethode();
-			}			
+			}
 		});
+		
+		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+		primaryStage.setTitle("FX Sudoku");
+		primaryStage.show();
 
 	}
 
 	public static void main(String[] args) {
 		launch(args);
 	}
-
-	public static Node getNode(final int zeile, final int spalte, GridPane raster) {
+	
+	
+	
+	
+	
+	
+	//Hole Inhalt(TextField)aus zelle der GridPane 
+	public static Node getNode(final int zeile, final int spalte, GridPane r) {
 		Node result = null;
-		ObservableList<Node> childrens = raster.getChildren();
+		ObservableList<Node> childrens = r.getChildren();
 		for (Node node : childrens) {
-			if (raster.getRowIndex(node) == zeile && raster.getColumnIndex(node) == spalte) {
+			if (r.getRowIndex(node) == zeile && r.getColumnIndex(node) == spalte) {
 				result = node;
 				break;
 			}
 		}
 		return result;
 	}
+	
+	
+	
+	
+	
 
 	// Nummer in Zeile suchen
 	public static boolean istNrInZeile(int nummer, int zeile) {
 		String n = Integer.toString(nummer);
 		for (int spalte = 0; spalte <= 8; spalte++) {
-			TextField tf = (TextField) getNode(zeile, spalte, raster);
+			TextField tf = (TextField) getNode(zeile, spalte, raster);			
 
 			if (tf.getText().equals(n)) {
 				lbl.setText("true");
 				return true;
-			}
+			}						
 		}
 		lbl.setText("false");
 		return false;
 	}
+	
+	
+	
+	
+	
 
 	// Nummer in Spalte suchen
 	public static boolean istNrInSpalte(int nummer, int spalte) {
 		String n = Integer.toString(nummer);
 		for (int zeile = 0; zeile <= 8; zeile++) {
-			TextField tf = (TextField) getNode(zeile, spalte, raster);
-
+			TextField tf = (TextField) getNode(zeile, spalte, raster);	
+			
 			if (tf.getText().equals(n)) {
 				lbl.setText("true");
 				return true;
 			}
+			
 		}
 		lbl.setText("false");
 		return false;
 	}
+	
+	
+	
+	
+	
 
 	// Nummer in 3x3 Bereich suchen suchen
 
@@ -292,15 +344,21 @@ public class Sudoku extends Application {
 				// System.out.println(tf.getText());
 
 				if (tf.getText().equals(n)) {
-					System.out.println("bereich loop 3");
+					System.out.println("bereich loop 3a");
 					lbl.setText("true");
 					return true;
-				}
+				}						
 			}
 		}
 		lbl.setText("false");
 		return false;
 	}
+	
+	
+	
+	
+	
+	
 
 	// erlaubte platzierung? zusammenfassung aller drei methoden() ist in: spalte,
 	// zeile, bereich
@@ -310,8 +368,13 @@ public class Sudoku extends Application {
 				&& !istNrInBereich(nummer, spalte, zeile));
 	}
 
+	
+	
+	
+	
+	
 	public static boolean solveSudoku() {
-
+		int counter = 0;
 		for (int zeile = 0; zeile <= 8; zeile++) {
 			for (int spalte = 0; spalte <= 8; spalte++) {
 
@@ -341,64 +404,82 @@ public class Sudoku extends Application {
 				}
 			}
 		}
+		
 		System.out.println("SUDOKU GELÖST");
-		lbl.setText("SUDOKU GELÖST");
-		return true;
-	}
-
-	public static void startMethode() {			
+		lbl.setText("START DRÜCKEN\nUM ZU SPIELEN");		
+		
 		for (int zeile = 0; zeile <= 8; zeile++) {
-			z= zeile;
-			
 			for (int spalte = 0; spalte <= 8; spalte++) {
-				s=spalte;
-				
-				TextField tf = (TextField) getNode(zeile, spalte, raster);			
-				
-				//erlaube nur einen Char als eingabe
+				TextField tf = (TextField) getNode(zeile, spalte, raster);
+				loesung[counter] = tf.getText();
+				counter++;
+			}
+		}
+		
+		return true;		
+	}
+		
+	
+	public static void startMethode() {			
+		int c1= 0;
+		
+		for (int zeile = 0; zeile <= 8; zeile++) {
+			z = zeile;
+			for (int spalte = 0; spalte <= 8; spalte++) {
+				String vergleich = loesung[c1];
+				s = spalte;
+				c1++;
+
+				TextField tf = (TextField) getNode(zeile, spalte, rasterUI);			
+
+				// erlaube nur einen Char als eingabe
 				tf.setTextFormatter(new TextFormatter<String>((Change change) -> {
-				    String newText = change.getControlNewText();
-				    if (newText.length() > 1) {
-				        return null ;
-				    } else {
-				        return change ;
-				    }
-				}));				
+					String newText = change.getControlNewText();
+					if (newText.length() > 1) {
+						return null;
+					} else {
+						return change;
+					}
+				}));
+
 				
 				tf.setOnKeyReleased(new EventHandler<KeyEvent>() {
 
 					public void handle(KeyEvent ke) {
-						
-						if (tf.getText().matches("/(^$)|^[1-9]{1}+$")){ //regex erlaube nur zahlen von 1 bis 9 und nur eine Zahl als eingabe
-						System.out.println(tf.getText());
-						tf.setStyle("-fx-control-inner-background: #ffffff");	
-						
-							if(!tf.getText().isEmpty()) {
-							
-								String tfString = tf.getText();				
-								int strZuNum = Integer.parseInt(tfString);	
-								System.out.println("ZAHLENCHECK");
-							
-								////////////////////
-								/////Lösung des sudokus in array speichern und hier abfragen ob index zeile, index spalte wert == wert array ist.
-							}
-							
 
-						} else if (tf.getText().equals("")){
+						if (tf.getText().matches("/(^$)|^[1-9]{1}+$")) { // regex erlaube nur zahlen von 1 bis 9 und nur eine Zahl als eingabe
+							System.out.println(tf.getText());							
+							
 							tf.setStyle("-fx-control-inner-background: #ffffff");
-						System.out.println("is empty!");						
-						} 
-						
+							String tfString = tf.getText();
+							int strZuNum = Integer.parseInt(tfString);
+														
+
+							if (!tf.getText().isEmpty() && tf.getText().equals(vergleich)) {
+								System.out.println("Gut");
+								tf.setStyle("-fx-control-inner-background: green");
+								System.out.println("Korrekte Nummer ist " + vergleich);
+								
+								
+							} else if(!tf.getText().isEmpty() && istNummerErlaubt(strZuNum, s, z)) {
+								System.out.println("Schlecht");
+								tf.setStyle("-fx-control-inner-background: red");
+							}
+
+						} else if (tf.getText().equals("")) {
+							tf.setStyle("-fx-control-inner-background: #ffffff");
+							System.out.println("is empty!");
+						}
+
 						else {
 							tf.setStyle("-fx-control-inner-background: red");
 							System.out.println("INVALID INPUT!");
-						}					
-							
-					}
-				});
+						}
+					}										
+				});	
+				
+				
 			}
 		}
-	}
-	
-	
+	}	
 }
